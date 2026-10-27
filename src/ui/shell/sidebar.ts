@@ -84,9 +84,9 @@ export function mountSidebar(
     'afterbegin',
     `
     <aside class="sidebar">
-      <a class="sidebar__brand" href="#/home" aria-label="Eli6Subnets">
+      <a class="sidebar__brand" href="#/home" aria-label="Netlab">
         <span class="sidebar__logo" aria-hidden="true">/24</span>
-        <h1 class="sidebar__title">Eli6<span>Subnets</span></h1>
+        <h1 class="sidebar__title">Net<span>lab</span></h1>
       </a>
       <nav class="sidebar__nav" data-i18n-aria="nav.main">${homeLink}${sections}</nav>
     </aside>
