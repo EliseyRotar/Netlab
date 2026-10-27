@@ -39,9 +39,9 @@ describe('i18n', () => {
 
   it('persists the language choice', () => {
     i18n.setLang('en')
-    expect(store.get('eli6subnets_lang')).toBe('en')
+    expect(store.get('netlab_lang')).toBe('en')
     i18n.setLang('it')
-    expect(store.get('eli6subnets_lang')).toBe('it')
+    expect(store.get('netlab_lang')).toBe('it')
   })
 
   it('notifies subscribers exactly once per actual change', () => {
