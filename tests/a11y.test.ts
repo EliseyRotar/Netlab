@@ -102,4 +102,15 @@ describe('accessibility', () => {
     document.documentElement.dataset['theme'] = 'light'
     expect(report(violations)).toBe('')
   })
+
+  it('keeps inactive views out of the layout (home must not leak)', () => {
+    // Regression: .home-view used to declare display on the bare class,
+    // which out-ranked the generic inactive hide (same specificity, later
+    // file) and kept the whole home page in every other route's layout.
+    document.querySelector<HTMLAnchorElement>('#nav-single')?.click()
+    expect(getComputedStyle(document.getElementById('view-home') as Element).display).toBe('none')
+
+    document.querySelector<HTMLAnchorElement>('#nav-home')?.click()
+    expect(getComputedStyle(document.getElementById('view-home') as Element).display).toBe('flex')
+  })
 })
