@@ -165,7 +165,7 @@ export function mountImportExport(
   // ── Export ──────────────────────────────────────────────────────
 
   qs(container, '#export-json').addEventListener('click', () => {
-    download('eli6subnets-state.json', JSON.stringify(getState(), null, 2), 'application/json')
+    download('netlab-state.json', JSON.stringify(getState(), null, 2), 'application/json')
     showToast(t('export.done', 'JSON'), 'success')
   })
 
@@ -176,7 +176,7 @@ export function mountImportExport(
       return
     }
     const view = getState().activeView
-    download(`eli6subnets-${view}.csv`, toCsv(panel.exportCsv()), 'text/csv')
+    download(`netlab-${view}.csv`, toCsv(panel.exportCsv()), 'text/csv')
     showToast(t('export.done', 'CSV'), 'success')
   })
 
