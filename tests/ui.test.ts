@@ -548,6 +548,31 @@ describe('state persistence', () => {
   })
 })
 
+describe('theme switch', () => {
+  it('persists the toggle into the store so later patches keep it', async () => {
+    // Boot adopts the pre-boot DOM theme, which the suite seeded as light.
+    expect(document.documentElement.dataset['theme']).toBe('light')
+
+    q<HTMLButtonElement>('#theme-toggle').click()
+    expect(document.documentElement.dataset['theme']).toBe('dark')
+    expect(localStorage.getItem('netlab_theme')).toBe('dark')
+
+    // Every state patch re-applies state.theme: without the toggle writing
+    // the store, this navigation would silently revert the user's choice.
+    q<HTMLAnchorElement>('#nav-vlsm').click()
+    expect(document.documentElement.dataset['theme']).toBe('dark')
+
+    // saveState batches writes on the next animation frame.
+    if (typeof requestAnimationFrame === 'function') {
+      await new Promise(resolve => requestAnimationFrame(() => resolve(undefined)))
+    }
+    expect(JSON.parse(localStorage.getItem('netlab_state') ?? '{}').theme).toBe('dark')
+
+    q<HTMLButtonElement>('#theme-toggle').click() // restore for the suite
+    expect(document.documentElement.dataset['theme']).toBe('light')
+  })
+})
+
 describe('csv helpers', () => {
   it('round-trips rows through export and import', () => {
     const rows = [
