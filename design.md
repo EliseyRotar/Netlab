@@ -1,4 +1,4 @@
-# Eli6Subnets — Design
+# Netlab — Design
 
 Version: 0.1  
 Date: 2026-09-25  
@@ -9,7 +9,7 @@ Status: Draft — awaiting validation
 ## 1. Project Structure
 
 ```
-Eli6Subnets/
+Netlab/
 ├── index.html
 ├── vite.config.ts
 ├── tsconfig.json
@@ -225,7 +225,7 @@ Both JSON files follow the same flat-ish key schema:
 
 ```json
 {
-  "app.title": "Eli6Subnets",
+  "app.title": "Netlab",
   "nav.singleSubnet": "Sottorete singola",
   "nav.vlsm": "VLSM",
   "nav.equalSplit": "Suddivisione uguale",
@@ -263,36 +263,40 @@ Each localised DOM element stores its translation key in `dataset.i18nKey` and o
 ### 5.1 CSS Tokens
 
 ```css
-/* src/styles/tokens.css */
+/* src/styles/tokens.css — OKLCH, every pair verified WCAG AA */
 :root {
-  /* Accent: blue-600 — technical, network-tool feel, AA-compliant on white and #1a1a2e */
-  --color-accent:        #2563eb;
-  --color-accent-hover:  #1d4ed8;
-  --color-accent-text:   #ffffff;
+  color-scheme: dark;
 
-  /* Neutrals (light) */
-  --color-bg:            #ffffff;
-  --color-surface:       #f4f4f5;
-  --color-border:        #d4d4d8;
-  --color-text:          #18181b;
-  --color-text-muted:    #71717a;
+  /* Accent: amber (actions); secondary: azure (data, links) */
+  --color-accent:        oklch(0.82 0.15 58);
+  --color-accent-hover:  oklch(0.87 0.13 62);
+  --color-accent-text:   oklch(0.205 0.033 55);
+  --color-secondary:     oklch(0.78 0.11 240);
+
+  /* Neutrals (dark = default scheme) */
+  --color-bg:            oklch(0.155 0.013 250);
+  --color-surface:       oklch(0.205 0.016 252);
+  --color-border:        oklch(0.305 0.021 255);
+  --color-text:          oklch(0.925 0.008 250);
+  --color-text-muted:    oklch(0.7 0.018 252);
 
   /* Semantic */
-  --color-success:       #16a34a;
-  --color-warning:       #d97706;
-  --color-error:         #dc2626;
+  --color-success:       oklch(0.77 0.16 155);
+  --color-warning:       oklch(0.82 0.135 100);
+  --color-error:         oklch(0.72 0.17 25);
 }
 
-[data-theme="dark"] {
-  --color-bg:            #0f0f13;
-  --color-surface:       #1c1c23;
-  --color-border:        #3f3f46;
-  --color-text:          #fafafa;
-  --color-text-muted:    #a1a1aa;
+[data-theme="light"] {
+  --color-accent:        oklch(0.5 0.135 55);
+  --color-secondary:     oklch(0.505 0.13 245);
+  --color-bg:            oklch(1 0 0);
+  --color-surface:       oklch(0.973 0.003 250);
+  --color-text:          oklch(0.205 0.01 260);
+  --color-text-muted:    oklch(0.495 0.013 255);
 }
 ```
 
-No gradient backgrounds. Depth is achieved through `--color-surface` vs `--color-bg` and border weight, not shadows or gradients.
+No gradient backgrounds. Depth is achieved through `--color-surface` vs `--color-bg` and border weight, not shadows or gradients. ECharts cannot parse `oklch()`, so `cssVar()` resolves tokens to hex through a canvas probe before handing them to the chart engine.
 
 ### 5.2 FOUT Prevention
 
@@ -301,9 +305,14 @@ No gradient backgrounds. Depth is achieved through `--color-surface` vs `--color
 ```html
 <script>
   (function () {
-    var saved = localStorage.getItem('eli6subnets_theme');
-    var preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    document.documentElement.dataset.theme = saved || preferred;
+    try {
+      document.documentElement.dataset.theme =
+        localStorage.getItem('netlab_theme') ||
+        localStorage.getItem('eli6subnets_theme') || /* pre-rename fallback */
+        'dark';
+    } catch (_) {
+      document.documentElement.dataset.theme = 'dark';
+    }
   })();
 </script>
 ```
@@ -338,9 +347,10 @@ interface AppState {
 ### 6.2 Persistence (`persist.ts`)
 
 ```ts
-const STATE_KEY  = 'eli6subnets_state'
-const LANG_KEY   = 'eli6subnets_lang'
-const THEME_KEY  = 'eli6subnets_theme'
+const STATE_KEY  = 'netlab_state'
+const LANG_KEY   = 'netlab_lang'
+const THEME_KEY  = 'netlab_theme'
+// pre-rename eli6subnets_* keys are read once as fallback
 
 function loadState(): AppState | null
 function saveState(state: AppState): void
@@ -500,7 +510,7 @@ jobs:
         uses: actions/deploy-pages@v4
 ```
 
-`vite.config.ts` must set `base: '/Eli6Subnets/'` for the GitHub Pages sub-path.
+`vite.config.ts` must set `base: '/Netlab/'` for the GitHub Pages sub-path.
 
 ---
 
