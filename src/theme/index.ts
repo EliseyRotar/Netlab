@@ -3,7 +3,8 @@
 // document.documentElement.dataset.theme before first paint; this module
 // reads that value and provides the runtime toggle.
 
-const STORAGE_KEY = 'eli6subnets_theme'
+const STORAGE_KEY = 'netlab_theme'
+const LEGACY_STORAGE_KEY = 'eli6subnets_theme' // pre-rename build
 
 export type Theme = 'light' | 'dark'
 
@@ -17,6 +18,7 @@ export function applyTheme(theme: Theme): void {
   document.documentElement.dataset['theme'] = theme
   try {
     localStorage.setItem(STORAGE_KEY, theme)
+    localStorage.removeItem(LEGACY_STORAGE_KEY)
   } catch {
     // localStorage may be blocked in some contexts; non-fatal
   }
