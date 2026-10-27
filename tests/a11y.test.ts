@@ -15,7 +15,7 @@ beforeAll(async () => {
 
   document.documentElement.dataset['theme'] = 'light'
   document.body.innerHTML = '<div id="app"></div>'
-  localStorage.setItem('eli6subnets_lang', 'it')
+  localStorage.setItem('netlab_lang', 'it')
   await import('../src/main')
 })
 
