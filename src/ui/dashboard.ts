@@ -7,7 +7,7 @@
  */
 
 import { donutOption, treemapOption, type DonutSlice, type MapNode } from '../charts/builders'
-import { renderChart } from '../charts/index'
+import { renderChart, scheduleRefresh } from '../charts/index'
 import type { SupernetResult } from '../calc/supernet'
 import type { SplitResult } from '../calc/split'
 import type { SubnetInfo } from '../calc/subnet'
@@ -38,6 +38,12 @@ function appendCharts(
   const { card, host } = chartCard(title)
   root.appendChild(card)
   renderChart(host, build)
+  // Builders run while the tree is still detached, so the registration
+  // above measures 0×0 and defers; the caller attaches the dashboard in
+  // the same task, so one coalesced refresh on the next frame mounts it.
+  // Without this the chart only appeared after a view/theme/language
+  // change triggered the next refresh cycle.
+  scheduleRefresh()
 }
 
 function percentOf(part: number, whole: number): number {
