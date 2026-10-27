@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Calcolatore di sottoreti IP: VLSM, supernetting, suddivisione uguale, configurazione Cisco IOS." />
-    <title>Eli6Subnets</title>
+    <title>Netlab</title>
 
     <!--
       FOUT-prevention: reads saved theme from localStorage and sets data-theme
@@ -15,7 +15,9 @@
       (function () {
         try {
           document.documentElement.dataset.theme =
-            localStorage.getItem('eli6subnets_theme') || 'dark';
+            localStorage.getItem('netlab_theme') ||
+            localStorage.getItem('eli6subnets_theme') || // pre-rename fallback
+            'dark';
         } catch (_) {
           // localStorage may be unavailable in some private-browsing contexts.
           document.documentElement.dataset.theme = 'dark';
