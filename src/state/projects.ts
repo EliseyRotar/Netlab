@@ -9,7 +9,8 @@
 
 import { normalizeState, type AppState } from './persist'
 
-export const PROJECTS_KEY = 'eli6subnets_projects'
+export const PROJECTS_KEY = 'netlab_projects'
+const LEGACY_PROJECTS_KEY = 'eli6subnets_projects' // pre-rename build
 
 export interface ProjectRecord {
   id: string
@@ -32,7 +33,7 @@ export function newProjectId(): string {
 export function loadProjects(): ProjectRecord[] {
   let raw: string | null
   try {
-    raw = localStorage.getItem(PROJECTS_KEY)
+    raw = localStorage.getItem(PROJECTS_KEY) ?? localStorage.getItem(LEGACY_PROJECTS_KEY)
   } catch {
     return []
   }
