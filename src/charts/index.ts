@@ -22,10 +22,29 @@ type OptionFactory = () => EChartsCoreOption
 
 const factories = new Map<HTMLElement, OptionFactory>()
 
-/** Read a design token from the live CSS custom properties. */
+/**
+ * Read a design token from the live CSS custom properties.
+ *
+ * The palette is written in OKLCH, but zrender (ECharts' renderer) only
+ * understands legacy colour syntax, so oklch() values are resolved to
+ * hex through a canvas fillStyle probe — the browser does the maths.
+ * If the engine cannot parse the value the raw string is returned
+ * unchanged (charts only run where a DOM exists anyway).
+ */
 export function cssVar(name: string): string {
   if (typeof document === 'undefined') return ''
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim()
+  const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim()
+  if (!value.startsWith('oklch(')) return value
+  try {
+    const ctx = document.createElement('canvas').getContext('2d')
+    if (!ctx) return value
+    ctx.fillStyle = '#010203' // sentinel: an unchanged read means "unparsed"
+    ctx.fillStyle = value
+    const parsed = ctx.fillStyle
+    return typeof parsed === 'string' && parsed !== '#010203' ? parsed : value
+  } catch {
+    return value
+  }
 }
 
 function isLight(): boolean {
@@ -33,13 +52,30 @@ function isLight(): boolean {
 }
 
 /**
- * Deterministic slice palette: fans out from the teal accent through
- * cyan/blue so the secondary colour appears naturally in every chart.
+ * Deterministic slice palette: Okabe-Ito hues tuned per theme (azure,
+ * amber, green, purple, vermillion, gold, blue — colour-blind safe).
+ * Hex is baked in because zrender cannot evaluate OKLCH tokens, and the
+ * two ramps need opposite label ink: white on the light ramp, dark on
+ * the bright dark-mode ramp (both verified >= 4.5:1).
  */
+const SERIES_RAMPS = {
+  light: ['#006495', '#7d4800', '#00603d', '#82427d', '#933125', '#5f4f00', '#3a59a4'],
+  dark: ['#5eade2', '#d28b3e', '#24af76', '#ce89c8', '#e47a6a', '#aa943d', '#7ea2f4'],
+} as const
+
 export function seriesColor(index: number): string {
-  const hue = (172 + index * 26) % 360
-  const lightness = isLight() ? 44 - (index % 3) * 7 : 58 - (index % 3) * 7
-  return `hsl(${hue} 62% ${lightness}%)`
+  const ramp = isLight() ? SERIES_RAMPS.light : SERIES_RAMPS.dark
+  return ramp[index % ramp.length] ?? ramp[0]
+}
+
+/** Ink for labels drawn on top of a series colour (AA on both themes). */
+export function seriesLabelColor(): string {
+  return isLight() ? '#ffffff' : cssVar('--color-bg')
+}
+
+/** Ink for labels on neutral "free" slices: the inverse of series ink. */
+export function dimLabelColor(): string {
+  return isLight() ? cssVar('--color-text') : '#ffffff'
 }
 
 export function textColor(): string {
