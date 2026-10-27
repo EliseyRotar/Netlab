@@ -9,7 +9,7 @@ import { describe, it, expect, beforeAll } from 'vitest'
 beforeAll(async () => {
   document.documentElement.dataset['theme'] = 'light'
   document.body.innerHTML = '<div id="app"></div>'
-  localStorage.setItem('eli6subnets_lang', 'it')
+  localStorage.setItem('netlab_lang', 'it')
 
   const { defaultState } = await import('../src/state/persist')
   const { encodeStateToUrl } = await import('../src/state/url')
