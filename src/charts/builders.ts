@@ -4,7 +4,7 @@
  */
 
 import type { EChartsCoreOption } from 'echarts/core'
-import { dimColor, mutedColor, seriesColor, surfaceColor, textColor } from './index'
+import { dimColor, dimLabelColor, mutedColor, seriesColor, seriesLabelColor, surfaceColor, textColor } from './index'
 
 export interface DonutSlice {
   name: string
@@ -96,6 +96,8 @@ export function treemapOption(nodes: MapNode[]): EChartsCoreOption {
       name: node.name,
       value: node.value,
       itemStyle: { color: node.free ? dimColor() : seriesColor(index) },
+      // Labels sit inside the tile: neutral slices need the inverse ink.
+      label: { color: node.free ? dimLabelColor() : seriesLabelColor() },
     }))
 
   return {
@@ -112,7 +114,7 @@ export function treemapOption(nodes: MapNode[]): EChartsCoreOption {
           formatter: '{b}',
           overflow: 'truncate',
           fontSize: 11,
-          color: '#ffffff',
+          color: seriesLabelColor(),
         },
         itemStyle: {
           borderColor: surfaceColor(),
