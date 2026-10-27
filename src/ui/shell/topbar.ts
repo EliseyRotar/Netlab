@@ -7,6 +7,7 @@
  */
 
 import { applyTranslations, getLang, setLang, t } from '../../i18n'
+import { patchState } from '../../state/store'
 import { getTheme, toggleTheme, type Theme } from '../../theme'
 import { IconGlobe, IconMenu, IconMoon, IconSun } from '../icons'
 import { qs } from '../dom'
@@ -63,7 +64,11 @@ export function mountTopbar(container: HTMLElement): TopbarHandle {
   })
 
   themeButton.addEventListener('click', () => {
-    toggleTheme()
+    // Mirror the toggle into the store (like the language toggle does via
+    // onLangChange): every later state patch re-applies state.theme, so a
+    // toggle that only touched the DOM would be silently reverted on the
+    // next navigation or calculation.
+    patchState({ theme: toggleTheme() })
     refresh()
   })
 
