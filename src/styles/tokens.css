@@ -1,48 +1,61 @@
 /*
-  Design tokens for Eli6Subnets — dark-first dashboard.
+  Design tokens for Netlab — dark-first dashboard.
 
-  Accent (primary): teal #2dd4bf on dark / #0f766e on light.
-  Rationale: reads as an operational/network colour (the look of the
-  reference dashboard the redesign is based on), keeps WCAG AA contrast
-  against both schemes, and stays clear of the blue-violet gradient look.
+  Palette: Amber + Azure (OKLCH, perceptually uniform).
 
-  Secondary accent: blue (#60a5fa dark / #2563eb light) — reserved for
-  links, informational data and secondary series in charts, so primary
-  actions (teal) never compete with data (blue).
+  Accent (primary): amber — warm, high-energy colour for actions,
+  focus rings, active nav and the brand highlight.
+  Secondary accent: azure — cool colour reserved for links,
+  informational data and secondary chart series, so primary
+  actions (amber) never compete with data (azure).
+
+  Both schemes are defined in OKLCH: lightness steps are even,
+  hover/active variants move predictably, and every text/background
+  pair below was verified against WCAG AA (>= 4.5:1 for text,
+  >= 3:1 for control borders) with a contrast script:
+
+    dark   text/bg 15.7  muted 7.3  accent 10.9  secondary 9.9
+    light  text/bg 14.9  muted 7.1  accent  6.3  secondary 6.0
 
   The dark scheme is the default theme; light is the override. Depth in
   dark mode comes from surface steps plus a hairline border, in light mode
   from surface vs background plus border weight.
+
+  Note: ECharts cannot parse oklch() strings — cssVar() in
+  src/charts/index.ts converts these values to hex before handing
+  them to the chart engine.
 */
 
 :root {
-  /* ---------- Primary accent: teal ---------- */
-  --color-accent:        #2dd4bf;
-  --color-accent-hover:  #5eead4;
-  --color-accent-active: #14b8a6;
-  --color-accent-text:   #06251f; /* text on filled accent buttons */
-  --color-accent-subtle: rgba(45, 212, 191, 0.12);
+  color-scheme: dark;
 
-  /* ---------- Secondary accent: blue ---------- */
-  --color-secondary:        #60a5fa;
-  --color-secondary-subtle: rgba(96, 165, 250, 0.14);
+  /* ---------- Primary accent: amber ---------- */
+  --color-accent:        oklch(0.82 0.15 58);
+  --color-accent-hover:  oklch(0.87 0.13 62);
+  --color-accent-active: oklch(0.745 0.16 56);
+  --color-accent-text:   oklch(0.205 0.033 55); /* text on filled accent buttons */
+  --color-accent-subtle: oklch(0.82 0.15 58 / 0.12);
+
+  /* ---------- Secondary accent: azure ---------- */
+  --color-secondary:        oklch(0.78 0.11 240);
+  --color-secondary-subtle: oklch(0.78 0.11 240 / 0.14);
 
   /* ---------- Neutrals (dark theme = default) ---------- */
-  --color-bg:            #0a0e14;
-  --color-surface:       #121821;
-  --color-surface-2:     #1a2230;
-  --color-border:        #232c3b;
-  --color-border-strong: #33415a;
-  --color-text:          #e6edf6;
-  --color-text-muted:    #8b98ab;
+  --color-bg:            oklch(0.155 0.013 250);
+  --color-surface:       oklch(0.205 0.016 252);
+  --color-surface-2:     oklch(0.255 0.019 255);
+  --color-border:        oklch(0.305 0.021 255);
+  --color-border-strong: oklch(0.49 0.028 258); /* >= 3:1 control outlines */
+  --color-text:          oklch(0.925 0.008 250);
+  --color-text-muted:    oklch(0.7 0.018 252);
 
   /* ---------- Semantic ---------- */
-  --color-success:       #4ade80;
-  --color-success-bg:    rgba(74, 222, 128, 0.10);
-  --color-warning:       #fbbf24;
-  --color-warning-bg:    rgba(251, 191, 36, 0.10);
-  --color-error:         #f87171;
-  --color-error-bg:      rgba(248, 113, 113, 0.10);
+  --color-success:       oklch(0.77 0.16 155);
+  --color-success-bg:    oklch(0.77 0.16 155 / 0.10);
+  --color-warning:       oklch(0.82 0.135 100);
+  --color-warning-bg:    oklch(0.82 0.135 100 / 0.10);
+  --color-error:         oklch(0.72 0.17 25);
+  --color-error-bg:      oklch(0.72 0.17 25 / 0.10);
 
   /* ---------- Elevation ---------- */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.40);
@@ -88,29 +101,31 @@
 
 /* ---------- Light theme overrides ---------- */
 [data-theme="light"] {
-  --color-accent:        #0f766e;
-  --color-accent-hover:  #115e59;
-  --color-accent-active: #134e4a;
-  --color-accent-text:   #ffffff;
-  --color-accent-subtle: rgba(15, 118, 110, 0.10);
+  color-scheme: light;
 
-  --color-secondary:        #2563eb;
-  --color-secondary-subtle: rgba(37, 99, 235, 0.08);
+  --color-accent:        oklch(0.5 0.135 55);
+  --color-accent-hover:  oklch(0.45 0.125 55);
+  --color-accent-active: oklch(0.395 0.115 55);
+  --color-accent-text:   oklch(1 0 0);
+  --color-accent-subtle: oklch(0.5 0.135 55 / 0.10);
 
-  --color-bg:            #ffffff;
-  --color-surface:       #f7f8fa;
-  --color-surface-2:     #eceef2;
-  --color-border:        #d7dbe2;
-  --color-border-strong: #a8b0bd;
-  --color-text:          #18181b;
-  --color-text-muted:    #64707f;
+  --color-secondary:        oklch(0.505 0.13 245);
+  --color-secondary-subtle: oklch(0.505 0.13 245 / 0.08);
 
-  --color-success:       #16a34a;
-  --color-success-bg:    #f0fdf4;
-  --color-warning:       #b45309;
-  --color-warning-bg:    #fffbeb;
-  --color-error:         #dc2626;
-  --color-error-bg:      #fef2f2;
+  --color-bg:            oklch(1 0 0);
+  --color-surface:       oklch(0.973 0.003 250);
+  --color-surface-2:     oklch(0.945 0.004 250);
+  --color-border:        oklch(0.905 0.005 250);
+  --color-border-strong: oklch(0.65 0.012 250);
+  --color-text:          oklch(0.205 0.01 260);
+  --color-text-muted:    oklch(0.495 0.013 255);
+
+  --color-success:       oklch(0.52 0.145 150);
+  --color-success-bg:    oklch(0.52 0.145 150 / 0.10);
+  --color-warning:       oklch(0.545 0.125 98);
+  --color-warning-bg:    oklch(0.545 0.125 98 / 0.10);
+  --color-error:         oklch(0.505 0.19 27);
+  --color-error-bg:      oklch(0.505 0.19 27 / 0.10);
 
   --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
   --shadow-md: 0 4px 14px rgba(15, 23, 42, 0.08);
