@@ -184,8 +184,12 @@
 
 /* ── Tool panel (two-column grid) ───────────────────────────────── */
 
-.tool-panel {
-  display: none; /* shown by JS when the view is active */
+/* Inactive views stay out of the layout. The :not(.is-active) form
+   (two classes) is deliberate: a component class that declares its own
+   display (one class, later file — e.g. .home-view) can then style the
+   active state without resurrecting the inactive panel. */
+.tool-panel:not(.is-active) {
+  display: none;
 }
 
 .tool-panel.is-active {
