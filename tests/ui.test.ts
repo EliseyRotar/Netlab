@@ -54,7 +54,7 @@ describe('app shell', () => {
 describe('home view', () => {
   it('renders the hero, rotating tip and bento grid of cards', () => {
     const view = q('#view-home')
-    expect(view.querySelector('.home-hero__title')?.textContent).toBe('Eli6Subnets')
+    expect(view.querySelector('.home-hero__title')?.textContent).toBe('Netlab')
     expect(view.querySelector('.home-hero__sub')?.textContent).toContain('VLSM')
     expect(view.querySelector('.home-tip__text')?.textContent).toContain('RFC')
     const cards = view.querySelectorAll('.home-card')
@@ -540,7 +540,7 @@ describe('state persistence', () => {
       await new Promise(resolve => requestAnimationFrame(() => resolve(undefined)))
     }
 
-    const raw = localStorage.getItem('eli6subnets_state')
+    const raw = localStorage.getItem('netlab_state')
     expect(raw).not.toBeNull()
     const state = JSON.parse(raw ?? '{}') as { activeView: string; lang: string }
     expect(state.activeView).toBe('supernet')
