@@ -1,5 +1,5 @@
 {
-  "app.title": "Eli6Subnets",
+  "app.title": "Netlab",
   "app.subtitle": "IPv4 subnet calculator",
 
   "nav.single": "Single subnet",
@@ -23,7 +23,7 @@
   "nav.home": "Home",
 
   "home.hero.kicker": "Network engineering toolkit",
-  "home.hero.title": "Eli6Subnets",
+  "home.hero.title": "Netlab",
   "home.hero.subtitle": "Calculate, verify and design IPv4 networks — VLSM, supernetting, cloud and more.",
   "home.tip.label": "Tip",
   "home.tip.1": "RFC 3021: the /31 prefix is designed for point-to-point links — both addresses are usable.",
@@ -223,7 +223,7 @@
   "import.jsonSuccess": "State restored from the JSON file.",
   "import.csvSuccess": "Data imported from the CSV file.",
   "import.invalidJson": "Invalid JSON file: {0}",
-  "import.unsupportedState": "The file does not contain a valid Eli6Subnets state.",
+  "import.unsupportedState": "The file does not contain a valid Netlab state.",
   "import.csvMismatch": "The CSV schema does not match the active tool.",
   "import.csvEmpty": "The CSV file contains no data rows.",
   "csv.error.row": "Row {0}, column {1}: {2}",
