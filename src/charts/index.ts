@@ -26,22 +26,34 @@ const factories = new Map<HTMLElement, OptionFactory>()
  * Read a design token from the live CSS custom properties.
  *
  * The palette is written in OKLCH, but zrender (ECharts' renderer) only
- * understands legacy colour syntax, so oklch() values are resolved to
- * hex through a canvas fillStyle probe — the browser does the maths.
- * If the engine cannot parse the value the raw string is returned
- * unchanged (charts only run where a DOM exists anyway).
+ * understands hex/rgb/hsl — its colour parser rejects everything else and
+ * silently falls back to black. So oklch() values are painted onto a 1×1
+ * canvas and read back as sRGB bytes; the browser does the maths. If the
+ * engine cannot paint the value (no 2d context in tests, unsupported
+ * syntax) the raw string is returned unchanged.
  */
 export function cssVar(name: string): string {
   if (typeof document === 'undefined') return ''
   const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim()
   if (!value.startsWith('oklch(')) return value
   try {
-    const ctx = document.createElement('canvas').getContext('2d')
+    const canvas = document.createElement('canvas')
+    canvas.width = 1
+    canvas.height = 1
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })
     if (!ctx) return value
-    ctx.fillStyle = '#010203' // sentinel: an unchanged read means "unparsed"
+    const read = (): number[] => Array.from(ctx.getImageData(0, 0, 1, 1).data)
+    ctx.fillStyle = '#010203' // sentinel: an unchanged read means "not painted"
+    ctx.fillRect(0, 0, 1, 1)
+    const sentinel = read()
     ctx.fillStyle = value
-    const parsed = ctx.fillStyle
-    return typeof parsed === 'string' && parsed !== '#010203' ? parsed : value
+    ctx.fillRect(0, 0, 1, 1)
+    const px = read()
+    if (px.join() === sentinel.join()) return value
+    const hex = (n: number): string => n.toString(16).padStart(2, '0')
+    const [r = 0, g = 0, b = 0, a = 255] = px
+    const base = `#${hex(r)}${hex(g)}${hex(b)}`
+    return a === 255 ? base : `${base}${hex(a)}` // #rrggbbaa for tints
   } catch {
     return value
   }
