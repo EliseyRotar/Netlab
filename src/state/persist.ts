@@ -6,7 +6,8 @@
  * instead of crashing on load.
  */
 
-export const STATE_KEY = 'eli6subnets_state'
+export const STATE_KEY = 'netlab_state'
+const LEGACY_STATE_KEY = 'eli6subnets_state' // pre-rename build
 export const SCHEMA_VERSION = 1
 
 /**
@@ -302,7 +303,9 @@ export function normalizeState(raw: unknown): AppState | null {
 export function loadState(): AppState | null {
   let raw: string | null
   try {
-    raw = localStorage.getItem(STATE_KEY)
+    // Pre-rename builds saved under the legacy key: fall back once so
+    // existing sessions survive the migration.
+    raw = localStorage.getItem(STATE_KEY) ?? localStorage.getItem(LEGACY_STATE_KEY)
   } catch {
     return null
   }
@@ -347,6 +350,7 @@ export function clearState(): void {
   }
   try {
     localStorage.removeItem(STATE_KEY)
+    localStorage.removeItem(LEGACY_STATE_KEY)
   } catch {
     // non-fatal
   }
