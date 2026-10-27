@@ -2,8 +2,8 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   // Sub-path used when deployed to GitHub Pages at
-  // https://eliseyrotar.github.io/Eli6Subnets/
-  base: '/Eli6Subnets/',
+  // https://eliseyrotar.github.io/Netlab/
+  base: '/Netlab/',
 
   build: {
     outDir: 'dist',
