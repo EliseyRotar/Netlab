@@ -1,18 +1,21 @@
-# HANDOFF — Eli6Subnets: ripresa su altro PC (opencode)
+# HANDOFF — Netlab (ex Eli6Subnets): ripresa su altro PC (opencode)
 
 > **Uso**: apri opencode nella cartella del progetto a casa e incolla questo prompt:
 > *"Leggi `HANDOFF-continue.md` e riprendi il lavoro dalla fase indicata in §5 esattamente
 > dove siamo arrivati, seguendo le convenzioni elencate."*
 >
 > File creato: 02/10/2026, sessione opencode (modello: opencode/mimo-v2.6-flash-free).
-> Ultimo aggiornamento: 20/10/2026 — **Fase 8 (home launcher + fix drag topology) pushata** (vedi §3/§7).
+> Ultimo aggiornamento: 27/10/2026 — **Fase 9 (rebrand Netlab + palette OKLCH Amber+Azure) pushata** (vedi §3/§7).
 
 ---
 
 ## 1. Il progetto
 
-**Eli6Subnets** — calcolatore di sottoreti IPv4, Vite + TypeScript vanilla (no framework),
-deploy GitHub Pages su `https://eliseyrotar.github.io/Eli6Subnets/` (repo `EliseyRotar/Eli6Subnets`).
+**Netlab** (ex Eli6Subnets) — calcolatore di sottoreti IPv4, Vite + TypeScript vanilla (no framework),
+deploy GitHub Pages su `https://eliseyrotar.github.io/Netlab/` (repo `EliseyRotar/Netlab`,
+rinominato da `EliseyRotar/Eli6Subnets`; la cartella locale resta `Eli6Subnets`).
+Il vecchio URL `https://eliseyrotar.github.io/Eli6Subnets/` resta attivo: lo stub repo
+`EliseyRotar/Eli6Subnets` (solo `index.html`) redirecta a Netlab preservando `?s=` e hash.
 
 Spec autorevole (DA LEGGERE all'avvio):
 - `tasks.md` (traccia attività T-01…T-30, tutte completate nella fase precedente)
@@ -35,7 +38,8 @@ Spec autorevole (DA LEGGERE all'avvio):
 - CSV: delimitatore `;`, UTF-8 BOM, quoting RFC 4180; schema per tool (`csvHeader` su `ToolPanel`).
 - Stato: store `src/state/store.ts` = single source of truth; `saveState` batched via rAF.
 - URL share: `?s=<base64url JSON subset>` (solo input) + **NUOVO: fragment `#/vista`** per la navigazione.
-- Theme: script inline in `index.html` anti-FOUT; chiavi `eli6subnets_theme`, `eli6subnets_lang`, `eli6subnets_state`.
+- Theme: script inline in `index.html` anti-FOUT; chiavi `netlab_theme`, `netlab_lang`, `netlab_state`
+  (Fase 9: letture con fallback alle chiavi legacy `eli6subnets_*`; `clearState`/scritture rimuovono la legacy).
 - **Git: UN FILE = UN COMMIT con messaggio custom** (regola dell'utente, history già riscritta così:
   56 commit). Qualsiasi push futuro deve rispettare questo.
 - tsconfig strict + `noUncheckedIndexedAccess` + `exactOptionalPropertyTypes`.
@@ -50,7 +54,8 @@ Spec autorevole (DA LEGGERE all'avvio):
 5. **Target**: tutti, **maggiorparte studenti (CCNA)** → copy didattico, spiegazioni, glossario.
 6. **Layout**: **Sidebar + viste** (niente più tab bar).
 7. `network_planner.html` è suo → **riutilizzare codice e design**.
-8. **Accento**: teal scuro + **blu secondario** (teal=azioni/stato attivo, blu=link/dati).
+8. **Accento**: iniziale teal + blu secondario; **Fase 9 → Amber (primario) + Azure (secondario)**,
+   token OKLCH in `tokens.css` con verifiche WCAG AA su entrambi i temi (vedi §3 Fase 9).
 9. **Topologia**: **editor drag&drop** (il tipo più complesso: nodi, link, assegnazione sottoreti).
 10. **IPv6**: **entrambi** (tool dedicato + validazione nei campi esistenti).
 
@@ -431,7 +436,71 @@ Commit `22a6886..0e633f6` (10 commit one-file, i18n it+en insieme), push `b5552e
 
 ---
 
-## 4. Fase 7 ✅ — chiusura: audit + verifica (COMPLETA) · Fase 8 ✅ — home launcher (COMPLETA)
+### Fase 9 ✅ — rebrand Netlab + palette OKLCH Amber+Azure + card home grandi (27/10/2026)
+
+Domande poste all'utente e risposte: nome = **Netlab** ✓; palette = **Amber + Azure**, ambito
+**UI + grafici + semantici**, entrambi i temi, token in **OKLCH** ✓; rebrand include **repo + URL**
+(vecchio URL Pages deve redirectare) ✓; home card = **grandi** ✓.
+
+**Rebrand** (21 commit `0429f16..490a3e6`): repo GitHub rinominato `EliseyRotar/Eli6Subnets` →
+**`EliseyRotar/Netlab`** (GitHub reindirizza da solo l'URL vecchio del repo), Pages su
+`https://eliseyrotar.github.io/Netlab/`, `vite.config.ts` `base: '/Netlab/'`, `<title>Netlab</title>`,
+brand sidebar `Net<span>lab</span>`, i18n `app.title`/`home.hero.title`/`import.unsupportedState`
+(it+en insieme), package `netlab`, export `netlab-state.json` / `netlab-<view>.csv`,
+`requirements.md` + `design.md` aggiornati (`tasks.md` NON toccato = storico).
+
+**Chiavi localStorage** rinominate `netlab_theme|lang|state|projects` con **fallback in lettura**
+alle chiavi legacy `eli6subnets_*` (rimosse in scrittura/clear): fallback anche nello script
+inline di `index.html`; `tests/ui.test.ts` semina ancora `eli6subnets_lang` di proposito
+per coprire la via legacy di `readStoredLang()`.
+
+**Redirect del vecchio URL Pages**: piccolo repo stub `EliseyRotar/Eli6Subnets` (creato da zero in
+`%TEMP%\opencode\eli6subnets-redirect`, commit `ecd3b37`) con `index.html` = meta-refresh +
+`location.replace` verso il nuovo URL **preservando `?s=` e hash**; Pages abilitata (legacy build,
+branch main `/`); `https://eliseyrotar.github.io/Eli6Subnets/` → 200 e redirect verificato.
+
+**Palette OKLCH Amber+Azure** (`src/styles/tokens.css`, commit `d5584b3`): accent amber, secondary
+azure, neutri e semantici ricalcolati (`:root` = dark default, `[data-theme="light"]` override,
+`color-scheme` per tema); **ogni pair verificato WCAG AA** (testo ≥4.5:1, bordi controllo ≥3:1) con
+script di contrasto. Bordini dei controlli interattivi (input, btn secondary/danger, bit) →
+`--color-border-strong` (≥3:1), hover → `text-muted` (commit `5fc19d0`). Card home ingrandite:
+colonna min 260px, padding 1.5rem, icona 3rem (hero 3.5rem), title 16px/hero 20px (commit `a31f8c6`).
+
+**Grafici** (`src/charts/index.ts` + `builders.ts`, commit `2f9c4bc`/`4ab5d35`): `seriesColor(i)` =
+ramp a 7 toni per tema — light `#006495,#7d4800,#00603d,#82427d,#933125,#5f4f00,#3a59a4` (label
+bianche), dark `#5eade2,#d28b3e,#24af76,#ce89c8,#e47a6a,#aa943d,#7ea2f4` (ink scuro); toni
+Okabe-Ito (safe per daltonismo), hex "baked-in" perché zrender non parse l'OKLCH;
+`seriesLabelColor()`/`dimLabelColor()` forniscono l'ink per tema e tipo di fetta (fette neutrali
+"invertite"); treemap: label per-fetta invece del bianco fisso.
+
+**4 fix da bug trovati in verifica live** (commit `b361312`, `2f51058`, `d68114b`, `7f711c6`, test `48ec2a8`):
+1. **`cssVar()` → hex via sonda canvas 1×1**: Chrome restituisce `fillStyle` **verbatim** per `oklch()`
+   (non lo converte in hex), zrender (che parse solo hex/rgb/hsl — verificato al sorgente) cadeva su
+   nero silenzioso. La sonda dipinge il token su un canvas 1×1 e rilegge i byte sRGB (confronto con
+   sentinella `#010203`; tinte alfa → `#rrggbbaa`). Verificato live: **zero `oklch`** nel SVG.
+2. **Mount dashboard differito**: i builder registrano l'host 0×0 mentre l'albero è staccato e nulla
+   schedulava il refresh successivo → donut bianco fino a activation/theme/lang/resize.
+   `appendCharts()` ora chiama `scheduleRefresh()` (il caller allega il pannello nello stesso task).
+3. **Toggle tema non persistiva nello store**: il topbar faceva `toggleTheme()` + `refresh()` senza
+   `patchState` → la prima patch di stato successiva (navigazione/calcolo) riapplicava `state.theme`
+   obsoleto e **revertava il tema** (e i grafici non si rebuildavano). Ora `patchState({ theme: toggleTheme() })`.
+4. **Boot adotta il tema dal DOM**: `bootstrap()` legge `getTheme()` su `initial.theme` prima di
+   `applyTheme`/`initStore` — lo script anti-FOUT è l'autorità, il mirror in `state.theme` non può
+   più flashare/revertare (side-effect: il seed `light` pre-boot di `a11y.test.ts` è ora efficace,
+   quindi lo scan principale copre il tema chiaro).
+
+**Verificate live** (dev server + deploy): mount autonomo senza resize, solo hex nei fill, ramp che
+cambiano col tema (`#5eade2…` → `#006495…`), toggle che sopravvive alla navigazione; sito
+deployato: title/assets `/Netlab/`, token oklch risolti in entrambi i temi, `netlab_theme` scritto
+e legacy rimosso.
+
+**Test**: 288/288 (nuovo test `theme switch` in `ui.test.ts`), axe 0, tsc 0, build ok
+(css 28.70 kB, index.js 135.77 kB, echarts 493.10 kB), coverage 98.53% / 100% funcs.
+Deploy run `40472011030` success. Push `0429f16..490a3e6` (rebrand) e `490a3e6..48ec2a8` (fix).
+
+---
+
+## 4. Fase 7 ✅ — chiusura: audit + verifica (COMPLETA) · Fase 8 ✅ — home launcher (COMPLETA) · Fase 9 ✅ — rebrand Netlab (COMPLETA)
 
 Le 7 fasi originali sono finite; la Fase 8 (home launcher + fix drag) le ha seguite.
 Verifiche finali della Fase 7:
@@ -439,7 +508,7 @@ Verifiche finali della Fase 7:
 - [x] **Audit i18n** — grep testi hardcodati in `src/ui/**`: pulito; parità it/en col test.
 - [x] **`export.noCsvView`** — `activePanel()` null sulle viste non-calc → messaggio su
       export/import; coperto dal test `footer export guard`.
-- [x] **Audit test** — `--coverage`: 285/285 (ora 287 con Fase 8), `src/calc` 98.53% lines / 100% funcs.
+- [x] **Audit test** — `--coverage`: 285/285 (ora 288 con Fase 9), `src/calc` 98.53% lines / 100% funcs.
 - [x] **axe 0 violazioni** (5 scenari, incluso dark theme) + `tsc --noEmit` + build ok.
 - [x] **Deploy Pages** — workflow `Deploy to GitHub Pages` success (ultimo run verificato
       con `gh run list`).
@@ -458,9 +527,16 @@ Verifiche finali della Fase 7:
 - CSS-only classi dai token (`--color-*`, `--space-*`, `--radius-*`); niente colori hardcodati.
 - Un file = un commit con messaggio custom, `git add <file>` mirato.
 - Verifiche obbligatorie: `.\node_modules\.bin\tsc.cmd --noEmit`,
-  `npm.cmd test` (287 test, 15 file), `npm.cmd run build`.
+  `npm.cmd test` (288 test, 15 file), `npm.cmd run build`.
 - ⚠ Suite jsdom può andare lenta in parallelo la prima volta su OneDrive (hookTimeout 10s):
   se 3 file falliscono con "Hook timed out", **rirun** `npm.cmd test` — di norma passa.
+- ⚠ Tema: ogni patch di stato riapplica `state.theme` → **il toggle deve passare da
+  `patchState`** (topbar) e il boot adotta `getTheme()` dal DOM (script anti-FOUT = autorità).
+  Test: `ui.test.ts` describe `theme switch` copre toggle + persistenza + non-revert.
+- ⚠ Grafici: ECharts/zrender non parse l'OKLCH → **tutti i token passano da `cssVar()`**
+  che converte via sonda canvas 1×1 a pixel (fillStyle verbatim in Chrome non basta).
+  I dashboard schedulano `scheduleRefresh()` in `appendCharts()` perché la registrazione
+  avviene con l'albero staccato (0×0).
 
 ---
 
@@ -480,9 +556,14 @@ Verifiche finali della Fase 7:
 - [x] **Fase 8** — Home launcher (bento grid + hero + tips rotanti, default view) +
       fix drag topology. (**COMPLETE: 287 test / 15 file, axe 0,
       commit `22a6886..0e633f6`, push `b5552e7..0e633f6`**)
+- [x] **Fase 9** — Rebrand **Netlab** (repo + URL + redirect vecchio Pages) + palette
+      **OKLCH Amber+Azure** (UI + grafici + semantici, entrambi i temi, WCAG AA verificato) +
+      card home grandi + 4 fix (sonda canvas cssVar, mount dashboard, toggle tema in store,
+      boot adotta tema DOM). (**COMPLETE: 288 test / 15 file, axe 0,
+      commit `0429f16..48ec2a8`, push `0429f16..490a3e6` + `490a3e6..48ec2a8`**)
 
 ### Criteri di qualità
-- `tsc --noEmit` 0 errori, `npm.cmd test` tutti verdi (287), axe 0 violazioni, build ok,
+- `tsc --noEmit` 0 errori, `npm.cmd test` tutti verdi (288), axe 0 violazioni, build ok,
   **0 riferimenti esterni** (no CDN: ECharts va bundlata, già in dependencies ✓).
 - Ogni vista: stato vuoto (`emptyState`), errori inline, KPI in alto-sinistra, max ~2 grafici/vista.
 - i18n: ogni stringa visibile in it **e** en.
@@ -493,12 +574,19 @@ Verifiche finali della Fase 7:
 
 ```powershell
 npm.cmd run dev            # sviluppo
-npm.cmd test               # vitest (287 test / 15 file)
+npm.cmd test               # vitest (288 test / 15 file)
 npm.cmd test -- --coverage # + coverage src/calc (98.5% lines)
 npm.cmd run build          # tsc --noEmit && vite build
 .\node_modules\.bin\tsc.cmd --noEmit   # typecheck (npx è BLOCCATO in questa shell)
 ```
 - Powershell mostra mojibake nell'output dei test → i file sono ok, usare il tool Read.
+- Verifica nel browser reale (browser tools): lo **sandbox di `evaluate` non ha timer**
+  (niente `setTimeout`/`Promise` con delay fuori dalla pagina) → attendere dentro la pagina
+  con `await new Promise(r => setTimeout(r, ms))`. Se la finestra del desktop non è visibile:
+  **rAF congelato** (`document.hasFocus() === false`) e screenshot impossibili → per testare
+  i grafici sovrascrivere `window.requestAnimationFrame = cb => setTimeout(...)` via evaluate
+  e/o dispatchare `resize`; per verificare il mount da boot serve il polyfill già attivo prima
+  dell'avvio → aggiungerlo temporaneamente a `index.html` e **revertare subito** (`git checkout -- index.html`, mai committare).
 - `gh` non era in PATH: `";$env:Path = [Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [Environment]::GetEnvironmentVariable('Path','User')"`; login già fatto come **EliseyRotar** (scope `repo, workflow, gist, read:org`).
 - Cloni di riferimento in `C:\Users\ELISEY~1\AppData\Local\Temp\opencode\` (cidr.xyz,
   visualsubnetcalc) — **temporanei, NON sul repo**: a casa re-clonare se servono.
@@ -509,30 +597,36 @@ npm.cmd run build          # tsc --noEmit && vite build
 
 ## 7. GIT — stato aggiornato
 
-- Repo locale `main` aggiornato con la **Fase 8**: `22a6886` fix drag topology →
-  `7c5bcc6` i18n home → `81f069e` persist home default → `19c3f6a` IconHome →
-  `9e23b0d` home view → `cb3d649` sidebar home link → `b23f98d` mount home →
-  `3fd7e24` home CSS → `2f62b0a` brand anchor → `0e633f6` test home/drag →
-  `d0cd944` reduced-motion globale → `f7c2206` view-in keyframe → `8de70ee`
-  hover/press micro-interactions → handoff, poi push (deploy automatico Pages).
-  Storico recente: `b5552e7` (handoff Fase 7), `3bba528` (handoff Fase 6),
-  `0348083..a1e9ad5` (Fase 6), `343145d` (Fase 5 axe), `f6cd764` (Fase 4), `da66ae9` (Fase 2/3).
-- **Working tree PULITA** dopo il commit dell'handoff.
+- **Repo remoto = `https://github.com/EliseyRotar/Netlab`** (origin già puntato lì;
+  il vecchio nome reindirizza). Repo stub redirect: `EliseyRotar/Eli6Subnets` (commit `ecd3b37`).
+- Repo locale `main` aggiornato con la **Fase 9** — rebrand/palette (`0429f16..490a3e6`, 21 commit):
+  `d5584b3` tokens OKLCH → `2f9c4bc` charts ramps + cssVar → `4ab5d35` treemap label →
+  `5fc19d0` bordi controlli → `a31f8c6` card grandi → `e7f85de` vite base `/Netlab/` →
+  `5c5bec7` index.html title/key → `4d7c006` sidebar brand → `0fcfe0e` i18n it+en →
+  `5d21ae9`/`871cc99`/`6dbbc60`/`f8385fe`/`473e7ed` chiavi storage + export →
+  `3452d48` package → `d192716`/`83b10bf`/`14470a1`/`626405f` test → `4c2b376` requirements →
+  `490a3e6` design; poi i 4 fix (`490a3e6..48ec2a8`): `b361312` sonda canvas cssVar →
+  `2f51058` mount dashboard → `d68114b` toggle tema in store → `7f711c6` boot tema DOM →
+  `48ec2a8` test regressione tema.
+  Storico recente: `8de70ee` (fine Fase 8 polish), `0e633f6` (test home/drag), `d0cd944` (handoff Fase 8).
+- **Working tree PULITA** (verificare con `git status --short`).
 - Convenzione invariata: **UN FILE = UN COMMIT**, messaggio custom, `git add <file>` mirato,
   mai `git add -A`; i18n it+en committati **insieme** per tenere la parità verde.
-- **Prossimo passo git**: Fase 8 completa e pushata. Eventuale lavoro futuro = nuova fase,
-  stesso schema (un file = un commit, poi push).
+- **Prossimo passo git**: Fase 9 completa e pushata (deploy Pages `40472011030` success).
+  Eventuale lavoro futuro = nuova fase, stesso schema (un file = un commit, poi push).
 
 ---
 
 ## 8. Prompt pronto da incollare a casa
 
 ```
-Apri il progetto Eli6Subnets. Leggi HANDOFF-continue.md per intero: contiene lo storico
-della chat, le decisioni prese e la verifica che TUTTE LE 8 fasi sono complete (287 test
-verdi, axe 0, coverage calc 98.5%, build ok, deploy Pages verificato, tutto pushato).
-Verifica lo stato con git status, tsc --noEmit e npm.cmd test. Se ti chiedo nuove
-funzionalità, trattale come una NUOVA fase seguendo le convenzioni nel §4 (i18n
-it/en con parità, nessuna firma AI, un file = un commit con messaggio custom, dark-first
-con accento teal + blu secondario, CSS dai token). Non committare/pushare senza chiedermelo.
+Apri il progetto Netlab (la cartella locale si chiama ancora Eli6Subnets). Leggi
+HANDOFF-continue.md per intero: contiene lo storico della chat, le decisioni prese e la
+verifica che TUTTE LE 9 fasi sono complete (288 test verdi, axe 0, coverage calc 98.5%,
+build ok, deploy Pages su https://eliseyrotar.github.io/Netlab/ verificato, tutto pushato;
+il vecchio URL Eli6Subnets redirecta via stub repo). Verifica lo stato con git status,
+tsc --noEmit e npm.cmd test. Se ti chiedo nuove funzionalità, trattale come una NUOVA
+fase seguendo le convenzioni nel §4 (i18n it/en con parità, nessuna firma AI, un file =
+un commit con messaggio custom, dark-first con accento amber + azure secondario, CSS
+solo dai token OKLCH, ECharts passa da cssVar()). Non committare/pushare senza chiedermelo.
 ```
