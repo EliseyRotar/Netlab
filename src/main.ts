@@ -22,7 +22,7 @@ import {
 } from './state/persist'
 import { decodeStateFromUrl } from './state/url'
 import { getState, initStore, patchState, subscribe } from './state/store'
-import { applyTheme, initTheme } from './theme'
+import { applyTheme, getTheme, initTheme } from './theme'
 import { mountFooter } from './ui/footer'
 import { mountSidebar } from './ui/shell/sidebar'
 import { mountTopbar } from './ui/shell/topbar'
@@ -60,6 +60,11 @@ function bootstrap(): void {
   initToast()
 
   const initial = resolveInitialState()
+  // The inline anti-FOUT script (or initTheme) has already applied the
+  // saved preference to data-theme before the first paint; the session's
+  // theme field is only a mirror of it and can lag behind. The live DOM
+  // value is the user's actual choice, so the store adopts it at boot.
+  initial.theme = getTheme()
   setLang(initial.lang)
   applyTheme(initial.theme)
   initStore(initial)
