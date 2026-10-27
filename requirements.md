@@ -1,4 +1,4 @@
-# Eli6Subnets — Requirements
+# Netlab — Requirements
 
 Version: 0.1  
 Date: 2026-09-25  
@@ -8,7 +8,7 @@ Status: Draft — awaiting validation
 
 ## 1. Scope
 
-Eli6Subnets is a static, client-only IP subnet calculator.  
+Netlab is a static, client-only IP subnet calculator.  
 It runs entirely in the browser; no backend, no runtime server.  
 Output is a single deployable `dist/` folder.
 
@@ -106,7 +106,7 @@ Import validation must produce field-level error messages (row, column, reason).
 
 ### FR-07 — Local State Persistence
 
-- On every meaningful state change, serialize the full application state to `localStorage` under key `eli6subnets_state`.
+- On every meaningful state change, serialize the full application state to `localStorage` under key `netlab_state` (reads fall back to the pre-rename `eli6subnets_state` key; clearing removes both).
 - On load, restore the last saved state automatically.
 - A "New Session" button clears `localStorage` and resets to defaults. It must show a confirmation dialog before clearing.
 - Persisted fields: active tool, all input values, language, theme, Cisco IOS interface/next-hop overrides.
@@ -172,7 +172,7 @@ When `error.host_bits_set` fires, suggest the corrected network address (e.g. us
 - All visible strings live in `src/i18n/it.json` (Italian) and `src/i18n/en.json` (English).
 - No hardcoded user-visible strings in component files.
 - Language is detected from `navigator.language` on first visit (prefix match: `it` → Italian, else English).
-- Language selection is persisted in `localStorage` under key `eli6subnets_lang`.
+- Language selection is persisted in `localStorage` under key `netlab_lang` (with fallback to the pre-rename `eli6subnets_lang` key).
 - The `t(key)` lookup function returns the key itself if a translation is missing (fail-visible, not silent).
 
 ---
@@ -182,7 +182,7 @@ When `error.host_bits_set` fires, suggest the corrected network address (e.g. us
 - CSS custom properties on `:root` (light defaults) and `[data-theme="dark"]` override block.
 - Accent colour: **`#2563eb`** (blue-600 equivalent) — chosen because it reads as a technical/network tool colour, maintains AA contrast on both white and near-black backgrounds, and avoids the cliché cyan-violet gradient.
 - Theme default: `prefers-color-scheme` media query.
-- Theme toggle persisted under `eli6subnets_theme` in `localStorage`.
+- Theme toggle persisted under `netlab_theme` in `localStorage` (the pre-rename `eli6subnets_theme` key is read as fallback and removed on the next write).
 - A minimal `<script>` placed before any CSS link in `<head>` reads `localStorage` and sets `document.documentElement.dataset.theme` before first paint, eliminating flash-of-wrong-theme (FOUT).
 
 ---
