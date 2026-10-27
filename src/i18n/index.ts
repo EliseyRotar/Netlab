@@ -12,7 +12,8 @@ import enDict from './en.json'
 
 export type Lang = 'it' | 'en'
 
-const LANG_KEY = 'eli6subnets_lang'
+const LANG_KEY = 'netlab_lang'
+const LEGACY_LANG_KEY = 'eli6subnets_lang' // pre-rename build
 
 const dicts: Record<Lang, Record<string, string>> = {
   it: itDict,
@@ -24,7 +25,7 @@ const listeners = new Set<(lang: Lang) => void>()
 
 function readStoredLang(): Lang | null {
   try {
-    const raw = localStorage.getItem(LANG_KEY)
+    const raw = localStorage.getItem(LANG_KEY) ?? localStorage.getItem(LEGACY_LANG_KEY)
     return raw === 'it' || raw === 'en' ? raw : null
   } catch {
     // localStorage unavailable (private mode, non-browser test env)
